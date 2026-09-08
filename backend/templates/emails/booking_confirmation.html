@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; }
+        .header { background-color: #0f172a; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .header h1 { color: #fff; margin: 0; font-size: 24px; letter-spacing: 1px; }
+        .header span { color: #14b8a6; }
+        .content { padding: 0 10px; }
+        .details-box { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; margin: 20px 0; }
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 8px; }
+        .detail-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .label { font-weight: 600; color: #475569; }
+        .value { color: #0f172a; font-weight: 500; }
+        .total-row { display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 2px solid #cbd5e1; font-size: 18px; font-weight: 700; color: #0f766e; }
+        .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Trans<span>Rentals</span></h1>
+        </div>
+        
+        <div class="content">
+            {% if is_vendor %}
+            <h2>New Booking Received!</h2>
+            <p>Hello,</p>
+            <p>You have received a new booking for your vehicle <strong>{{ booking.vehicle.name }}</strong>.</p>
+            {% else %}
+            <h2>Booking Confirmed!</h2>
+            <p>Hello {{ booking.customer_name }},</p>
+            <p>Your booking for <strong>{{ booking.vehicle.name }}</strong> has been successfully confirmed. Below are your booking details:</p>
+            {% endif %}
+
+            <div class="details-box">
+                <div class="detail-row">
+                    <span class="label">Booking ID:</span>
+                    <span class="value">#{{ booking.id }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Status:</span>
+                    <span class="value" style="color: #14b8a6;">{{ booking.status }}</span>
+                </div>
+                {% if is_vendor %}
+                <div class="detail-row">
+                    <span class="label">Customer Name:</span>
+                    <span class="value">{{ booking.customer_name }}</span>
+                </div>
+                {% else %}
+                <div class="detail-row">
+                    <span class="label">Category:</span>
+                    <span class="value">{{ booking.vehicle.category }}</span>
+                </div>
+                {% endif %}
+                <div class="detail-row">
+                    <span class="label">Requested Location:</span>
+                    <span class="value">{{ booking.pickup_location }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Vehicle Location:</span>
+                    <span class="value">{{ booking.vehicle.locality }}, {{ booking.vehicle.city }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Full Address:</span>
+                    <span class="value">{{ booking.vehicle.address }}</span>
+                </div>
+                {% if booking.vehicle.google_maps_url %}
+                <div class="detail-row">
+                    <span class="label">Google Maps:</span>
+                    <span class="value"><a href="{{ booking.vehicle.google_maps_url }}" style="color: #14b8a6; text-decoration: none;">View on Maps</a></span>
+                </div>
+                {% endif %}
+                <div class="detail-row">
+                    <span class="label">Pickup Date & Time:</span>
+                    <span class="value">{{ booking.pickup_datetime }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Return Date & Time:</span>
+                    <span class="value">{{ booking.return_datetime }}</span>
+                </div>
+                
+                {% if not is_vendor %}
+                <div class="detail-row" style="margin-top: 15px; border-top: 2px solid #cbd5e1; padding-top: 15px;">
+                    <span class="label">Vendor Contact:</span>
+                    <span class="value">{{ booking.vehicle.vendor.user.name }} ({{ booking.vehicle.vendor.phone|default:booking.vehicle.vendor.user.phone }})</span>
+                </div>
+                {% endif %}
+                
+                <div class="detail-row" style="margin-top: 15px; border-top: 2px solid #cbd5e1; padding-top: 15px;">
+                    <span class="label">Rental Amount:</span>
+                    <span class="value">₹{{ booking.rental_amount }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">GST (18%):</span>
+                    <span class="value">₹{{ booking.tax_amount }}</span>
+                </div>
+                <div class="total-row">
+                    <span>Total Amount:</span>
+                    <span>₹{{ booking.total_amount }}</span>
+                </div>
+            </div>
+
+            <p>Thank you for choosing TransRentals.</p>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2026 TransRentals. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
